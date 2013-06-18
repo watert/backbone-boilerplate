@@ -18,7 +18,7 @@ var jam = {
         {
             "name": "lodash",
             "location": "../vendor/jam/lodash",
-            "main": "./lodash.js"
+            "main": "./dist/lodash.compat.js"
         },
         {
             "name": "underscore",
@@ -26,7 +26,7 @@ var jam = {
             "main": "underscore.js"
         }
     ],
-    "version": "0.2.15",
+    "version": "0.2.17",
     "shim": {
         "backbone": {
             "deps": [
@@ -34,14 +34,6 @@ var jam = {
                 "jquery"
             ],
             "exports": "Backbone"
-        },
-        "backbone.layoutmanager": {
-            "deps": [
-                "jquery",
-                "backbone",
-                "underscore"
-            ],
-            "exports": "Backbone.Layout"
         },
         "underscore": {
             "exports": "_"
@@ -70,7 +62,7 @@ if (typeof require !== "undefined" && require.config) {
         {
             "name": "lodash",
             "location": "../vendor/jam/lodash",
-            "main": "./lodash.js"
+            "main": "./dist/lodash.compat.js"
         },
         {
             "name": "underscore",
@@ -85,14 +77,6 @@ if (typeof require !== "undefined" && require.config) {
                 "jquery"
             ],
             "exports": "Backbone"
-        },
-        "backbone.layoutmanager": {
-            "deps": [
-                "jquery",
-                "backbone",
-                "underscore"
-            ],
-            "exports": "Backbone.Layout"
         },
         "underscore": {
             "exports": "_"
@@ -121,7 +105,7 @@ else {
         {
             "name": "lodash",
             "location": "../vendor/jam/lodash",
-            "main": "./lodash.js"
+            "main": "./dist/lodash.compat.js"
         },
         {
             "name": "underscore",
@@ -136,14 +120,6 @@ else {
                 "jquery"
             ],
             "exports": "Backbone"
-        },
-        "backbone.layoutmanager": {
-            "deps": [
-                "jquery",
-                "backbone",
-                "underscore"
-            ],
-            "exports": "Backbone.Layout"
         },
         "underscore": {
             "exports": "_"
