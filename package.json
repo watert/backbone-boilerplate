@@ -1,21 +1,16 @@
 {
-  "name": "backbone-boilerplate",
+  "name": "Backbone Boilerplate",
   "version": "0.1.0",
-
-  "dependencies": {
-    "grunt": "~0.4",
-    "grunt-bbb-server": "0.1.0-alpha"
-  },
 
   "jam": {
     "packageDir": "./vendor/jam",
     "baseUrl": "./app",
 
     "dependencies": {
-      "backbone": "*",
-      "jquery": "*",
-      "lodash": "*",
-      "backbone.layoutmanager": "*"
+      "backbone": "0.9.2",
+      "jquery": "1.8.3",
+      "lodash": "0.9.2",
+      "backbone.layoutmanager": "0.7.1"
     }
   }
 }

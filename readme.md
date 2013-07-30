@@ -7,7 +7,7 @@ This boilerplate is the product of much research and frustration.  Existing
 boilerplates freely modify Backbone core, lack a build process, and are very
 prescriptive; Backbone Boilerplate changes that.
 
-Organize your application with a logical file structure, develop your
+Organize your application in a logical filesystem, develop your
 Models/Collections/Views/Routers inside modules, and build knowing you have
 efficient code that will not bottleneck your users.
 
@@ -22,19 +22,6 @@ Special Thanks to: [cowboy](http://github.com/cowboy),
 Extra Special Thanks to: [Paul Guinan](http://bigredhair.com/work/paul.html)
 for giving me usage rights to his fantastic Boilerplate character.
 
-## Getting started ##
-
-The easiest way to get started is to install Git and clone the repository:
-
-``` bash
-# Create a new project directory and enter it.
-mkdir myproject && cd myproject
-
-# Using Git, fetch only the last few commits.  You don't need the full history
-# for your project.
-git clone --q --depth 0 git@github.com:tbranyen/backbone-boilerplate.git .
-```
-
 ## Documentation ##
 
 View the Backbone Boilerplate documentation here:
@@ -47,8 +34,3 @@ To use the new and improved build process, please visit the
 [grunt-bbb](https://github.com/backbone-boilerplate/grunt-bbb)
 plugin repo and follow the instructions to install.  Basing your project off
 this repo will allow the `bbb` commands to work out-of-the-box.
-
-
-## License
-Copyright (c) 2013 Tim Branyen (@tbranyen)  
-Licensed under the MIT license.

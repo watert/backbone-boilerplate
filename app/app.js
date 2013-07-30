@@ -1,11 +1,6 @@
 define([
   "backbone.layoutmanager"
-
-  // Include additional libraries installed with JamJS or placed in the
-  // `vendor/js` directory, here.
-],
-
-function(LayoutManager) {
+], function() {
 
   // Provide a global location to place configuration settings and module
   // creation.
@@ -18,7 +13,7 @@ function(LayoutManager) {
   var JST = window.JST = window.JST || {};
 
   // Configure LayoutManager with Backbone Boilerplate defaults.
-  LayoutManager.configure({
+  Backbone.LayoutManager.configure({
     // Allow LayoutManager to augment Backbone.View.prototype.
     manage: true,
 
@@ -38,8 +33,8 @@ function(LayoutManager) {
 
       // Seek out the template asynchronously.
       $.get(app.root + path, function(contents) {
-        done(_.template(contents));
-      }, "text");
+        done(JST[path] = _.template(contents));
+      });
     }
   });
 
@@ -66,18 +61,13 @@ function(LayoutManager) {
         options.template = name;
       }
 
-      // Check if a layout already exists, if so, update the template.
-      if (this.layout) {
-        this.layout.template = options.template;
-      } else {
-        // Create a new Layout with options.
-        this.layout = new Backbone.Layout(_.extend({
-          el: "main"
-        }, options));
-      }
+      // Create a new Layout with options.
+      var layout = new Backbone.Layout(_.extend({
+        el: "#main"
+      }, options));
 
-      // Cache the reference.
-      return this.layout;
+      // Cache the refererence.
+      return this.layout = layout;
     }
   }, Backbone.Events);
 

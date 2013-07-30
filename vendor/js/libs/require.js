@@ -1,5 +1,5 @@
 /** vim: et:ts=4:sw=4:sts=4
- * @license RequireJS 2.1.2 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
+ * @license RequireJS 2.1.1 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
  * see: http://github.com/jrburke/requirejs for details
  */
@@ -12,7 +12,7 @@ var requirejs, require, define;
 (function (global) {
     var req, s, head, baseElement, dataMain, src,
         interactiveScript, currentlyAddingScript, mainScript, subPath,
-        version = '2.1.2',
+        version = '2.1.1',
         commentRegExp = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg,
         cjsRequireRegExp = /[^.]\s*require\s*\(\s*["']([^'"\s]+)["']\s*\)/g,
         jsSuffixRegExp = /\.js$/,
@@ -81,10 +81,6 @@ var requirejs, require, define;
         return hasOwn.call(obj, prop);
     }
 
-    function getOwn(obj, prop) {
-        return hasProp(obj, prop) && obj[prop];
-    }
-
     /**
      * Cycles over properties in an object and calls a function for each
      * property value. If the function returns a truthy value, then the
@@ -93,7 +89,7 @@ var requirejs, require, define;
     function eachProp(obj, func) {
         var prop;
         for (prop in obj) {
-            if (hasProp(obj, prop)) {
+            if (obj.hasOwnProperty(prop)) {
                 if (func(obj[prop], prop)) {
                     break;
                 }
@@ -265,7 +261,7 @@ var requirejs, require, define;
                 //otherwise, assume it is a top-level require that will
                 //be relative to baseUrl in the end.
                 if (baseName) {
-                    if (getOwn(config.pkgs, baseName)) {
+                    if (config.pkgs[baseName]) {
                         //If the baseName is a package name, then just treat it as one
                         //name to concat the name with.
                         normalizedBaseParts = baseParts = [baseName];
@@ -283,7 +279,7 @@ var requirejs, require, define;
 
                     //Some use of packages may use a . path to reference the
                     //'main' module name, so normalize for that.
-                    pkgConfig = getOwn(config.pkgs, (pkgName = name[0]));
+                    pkgConfig = config.pkgs[(pkgName = name[0])];
                     name = name.join('/');
                     if (pkgConfig && name === pkgName + '/' + pkgConfig.main) {
                         name = pkgName;
@@ -306,12 +302,12 @@ var requirejs, require, define;
                         //Find the longest baseName segment match in the config.
                         //So, do joins on the biggest to smallest lengths of baseParts.
                         for (j = baseParts.length; j > 0; j -= 1) {
-                            mapValue = getOwn(map, baseParts.slice(0, j).join('/'));
+                            mapValue = map[baseParts.slice(0, j).join('/')];
 
                             //baseName segment has config, find if it has one for
                             //this name.
                             if (mapValue) {
-                                mapValue = getOwn(mapValue, nameSegment);
+                                mapValue = mapValue[nameSegment];
                                 if (mapValue) {
                                     //Match, update name to the new value.
                                     foundMap = mapValue;
@@ -329,8 +325,8 @@ var requirejs, require, define;
                     //Check for a star map match, but just hold on to it,
                     //if there is a shorter segment match later in a matching
                     //config, then favor over this star map.
-                    if (!foundStarMap && starMap && getOwn(starMap, nameSegment)) {
-                        foundStarMap = getOwn(starMap, nameSegment);
+                    if (!foundStarMap && starMap && starMap[nameSegment]) {
+                        foundStarMap = starMap[nameSegment];
                         starI = i;
                     }
                 }
@@ -362,7 +358,7 @@ var requirejs, require, define;
         }
 
         function hasPathFallback(id) {
-            var pathConfig = getOwn(config.paths, id);
+            var pathConfig = config.paths[id];
             if (pathConfig && isArray(pathConfig) && pathConfig.length > 1) {
                 removeScript(id);
                 //Pop off the first array value, since it failed, and
@@ -423,7 +419,7 @@ var requirejs, require, define;
 
             if (prefix) {
                 prefix = normalize(prefix, parentName, applyMap);
-                pluginModule = getOwn(defined, prefix);
+                pluginModule = defined[prefix];
             }
 
             //Account for relative paths if there is a base name.
@@ -476,7 +472,7 @@ var requirejs, require, define;
 
         function getModule(depMap) {
             var id = depMap.id,
-                mod = getOwn(registry, id);
+                mod = registry[id];
 
             if (!mod) {
                 mod = registry[id] = new context.Module(depMap);
@@ -487,7 +483,7 @@ var requirejs, require, define;
 
         function on(depMap, name, fn) {
             var id = depMap.id,
-                mod = getOwn(registry, id);
+                mod = registry[id];
 
             if (hasProp(defined, id) &&
                     (!mod || mod.defineEmitComplete)) {
@@ -507,7 +503,7 @@ var requirejs, require, define;
                 errback(err);
             } else {
                 each(ids, function (id) {
-                    var mod = getOwn(registry, id);
+                    var mod = registry[id];
                     if (mod) {
                         //Set error on module, so it skips timeout checks.
                         mod.error = err;
@@ -566,7 +562,7 @@ var requirejs, require, define;
                         id: mod.map.id,
                         uri: mod.map.url,
                         config: function () {
-                            return (config.config && getOwn(config.config, mod.map.id)) || {};
+                            return (config.config && config.config[mod.map.id]) || {};
                         },
                         exports: defined[mod.map.id]
                     });
@@ -588,14 +584,14 @@ var requirejs, require, define;
                 traced[id] = true;
                 each(mod.depMaps, function (depMap, i) {
                     var depId = depMap.id,
-                        dep = getOwn(registry, depId);
+                        dep = registry[depId];
 
                     //Only force things that have not completed
                     //being defined, so still in the registry,
                     //and only if it has not been matched up
                     //in the module already.
                     if (dep && !mod.depMatched[i] && !processed[depId]) {
-                        if (getOwn(traced, depId)) {
+                        if (traced[depId]) {
                             mod.defineDep(i, defined[depId]);
                             mod.check(); //pass false?
                         } else {
@@ -695,9 +691,9 @@ var requirejs, require, define;
         }
 
         Module = function (map) {
-            this.events = getOwn(undefEvents, map.id) || {};
+            this.events = undefEvents[map.id] || {};
             this.map = map;
-            this.shim = getOwn(config.shim, map.id);
+            this.shim = config.shim[map.id];
             this.depExports = [];
             this.depMaps = [];
             this.depMatched = [];
@@ -944,7 +940,7 @@ var requirejs, require, define;
                                 });
                             }));
 
-                        normalizedMod = getOwn(registry, normalizedMap.id);
+                        normalizedMod = registry[normalizedMap.id];
                         if (normalizedMod) {
                             //Mark this as a dependency for this plugin, so it
                             //can be traced for cycles.
@@ -1009,11 +1005,6 @@ var requirejs, require, define;
                         //it.
                         getModule(moduleMap);
 
-                        //Transfer any config to this other module.
-                        if (hasProp(config.config, id)) {
-                            config.config[moduleName] = config.config[id];
-                        }
-
                         try {
                             req.exec(text);
                         } catch (e) {
@@ -1069,7 +1060,7 @@ var requirejs, require, define;
                                                !this.skipMap);
                         this.depMaps[i] = depMap;
 
-                        handler = getOwn(handlers, depMap.id);
+                        handler = handlers[depMap.id];
 
                         if (handler) {
                             this.depExports[i] = handler(this);
@@ -1094,7 +1085,7 @@ var requirejs, require, define;
                     //Skip special modules like 'require', 'exports', 'module'
                     //Also, don't call enable if it is already enabled,
                     //important in circular dependency cases.
-                    if (!hasProp(handlers, id) && mod && !mod.enabled) {
+                    if (!handlers[id] && mod && !mod.enabled) {
                         context.enable(depMap, this);
                     }
                 }));
@@ -1102,7 +1093,7 @@ var requirejs, require, define;
                 //Enable each plugin that is used in
                 //a dependency
                 eachProp(this.pluginMaps, bind(this, function (pluginMap) {
-                    var mod = getOwn(registry, pluginMap.id);
+                    var mod = registry[pluginMap.id];
                     if (mod && !mod.enabled) {
                         context.enable(pluginMap, this);
                     }
@@ -1135,10 +1126,7 @@ var requirejs, require, define;
         };
 
         function callGetModule(args) {
-            //Skip modules already defined.
-            if (!hasProp(defined, args[0])) {
-                getModule(makeModuleMap(args[0], null, true)).init(args[1], args[2]);
-            }
+            getModule(makeModuleMap(args[0], null, true)).init(args[1], args[2]);
         }
 
         function removeListener(node, func, name, ieName) {
@@ -1251,7 +1239,7 @@ var requirejs, require, define;
                                 deps: value
                             };
                         }
-                        if ((value.exports || value.init) && !value.exportsFn) {
+                        if (value.exports && !value.exportsFn) {
                             value.exportsFn = context.makeShimExports(value);
                         }
                         shim[id] = value;
@@ -1313,7 +1301,7 @@ var requirejs, require, define;
                     if (value.init) {
                         ret = value.init.apply(global, arguments);
                     }
-                    return ret || (value.exports && getGlobal(value.exports));
+                    return ret || getGlobal(value.exports);
                 }
                 return fn;
             },
@@ -1337,7 +1325,7 @@ var requirejs, require, define;
                         //If require|exports|module are requested, get the
                         //value for them from the special handlers. Caveat:
                         //this only works while module is being defined.
-                        if (relMap && hasProp(handlers, deps)) {
+                        if (relMap && handlers[deps]) {
                             return handlers[deps](registry[relMap.id]);
                         }
 
@@ -1425,7 +1413,7 @@ var requirejs, require, define;
                         takeGlobalQueue();
 
                         var map = makeModuleMap(id, relMap, true),
-                            mod = getOwn(registry, id);
+                            mod = registry[id];
 
                         delete defined[id];
                         delete urlFetched[map.url];
@@ -1453,7 +1441,7 @@ var requirejs, require, define;
              * used by the optimizer.
              */
             enable: function (depMap, parent) {
-                var mod = getOwn(registry, depMap.id);
+                var mod = registry[depMap.id];
                 if (mod) {
                     getModule(depMap).enable();
                 }
@@ -1467,7 +1455,7 @@ var requirejs, require, define;
              */
             completeLoad: function (moduleName) {
                 var found, args, mod,
-                    shim = getOwn(config.shim, moduleName) || {},
+                    shim = config.shim[moduleName] || {},
                     shExports = shim.exports;
 
                 takeGlobalQueue();
@@ -1493,9 +1481,9 @@ var requirejs, require, define;
 
                 //Do this after the cycle of callGetModule in case the result
                 //of those calls/init calls changes the registry.
-                mod = getOwn(registry, moduleName);
+                mod = registry[moduleName];
 
-                if (!found && !hasProp(defined, moduleName) && mod && !mod.inited) {
+                if (!found && !defined[moduleName] && mod && !mod.inited) {
                     if (config.enforceDefine && (!shExports || !getGlobal(shExports))) {
                         if (hasPathFallback(moduleName)) {
                             return;
@@ -1546,8 +1534,8 @@ var requirejs, require, define;
                     //and work up from it.
                     for (i = syms.length; i > 0; i -= 1) {
                         parentModule = syms.slice(0, i).join('/');
-                        pkg = getOwn(pkgs, parentModule);
-                        parentPath = getOwn(paths, parentModule);
+                        pkg = pkgs[parentModule];
+                        parentPath = paths[parentModule];
                         if (parentPath) {
                             //If an array, it means there are a few choices,
                             //Choose the one that is desired
@@ -1672,7 +1660,7 @@ var requirejs, require, define;
             contextName = config.context;
         }
 
-        context = getOwn(contexts, contextName);
+        context = contexts[contextName];
         if (!context) {
             context = contexts[contextName] = req.s.newContext(contextName);
         }
